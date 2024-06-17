@@ -22,6 +22,31 @@ app.use(express.json());
 import routers from "./src/routers/routers.js";
 routers.forEach(({ path, middlewawers }) => app.use(path, ...middlewawers));
 
+// Error Handlers
+
+app.get("/", (req, res, next) => {
+  res.json({
+    status: "success",
+    message: "server is live",
+  });
+});
+
+app.use("*", (req, res, next) => {
+  const err = new Error("404 page not found");
+  err.statusCode = 404;
+  next(err);
+});
+
+app.use((error, req, res, next) => {
+  console.log(error, "---------");
+
+  res.status(error.statusCode || 500);
+  res.json({
+    status: "error",
+    message: error.message,
+  });
+});
+
 app.listen(PORT, (error) => {
   error ? console.log(error) : console.log(`server connected at PORT ${PORT}`);
 });

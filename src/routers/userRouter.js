@@ -12,5 +12,16 @@ router.get("/", (req, res, next) => {
     next(error);
   }
 });
+router.post("/", (req, res, next) => {
+  try {
+    console.log(req.body);
+    res.json({
+      status: "Success",
+      message: "TODO",
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;
