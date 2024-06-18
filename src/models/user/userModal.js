@@ -1,21 +1,24 @@
 import userSchema from "./userSchema.js";
 
 // create
-export const addItem = () => {
-  return userSchema(item).save();
+export const insertUser = (userObj) => {
+  return userSchema(userObj).save();
 };
 
 // Read
-export const getItem = () => {
-  return userSchema.findById();
+export const getAUser = (filter) => {
+  return userSchema.findOne(filter);
+};
+export const getAllUsers = () => {
+  return userSchema.findOne();
 };
 
 // Update
-export const upDateItem = () => {
-  return userSchema.updateOne();
+export const updateUserById = ({ _id, obj }) => {
+  return userSchema.findByIdAndUpdate(_id, obj);
 };
 
 // delete
-export const deleteItem = () => {
+export const deleteAUserById = ({ _id }) => {
   return userSchema.findByIdAndDelete();
 };
