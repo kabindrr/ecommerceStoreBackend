@@ -12,7 +12,7 @@ const PHONE_REQ = Joi.number().required();
 const EMAIL = Joi.string().email({ minDomainSegments: 2 }).allow("", null);
 const EMAIL_REQ = Joi.string().email({ minDomainSegments: 2 }).required();
 
-const validator = (res, res, next, schema) => {
+const validator = (req, res, next, schema) => {
   try {
     const { error } = schema.validate(req.body);
     if (error) {

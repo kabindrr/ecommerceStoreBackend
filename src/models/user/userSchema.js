@@ -39,11 +39,11 @@ const userSchema = new mongoose.Schema(
     },
     isEmailVerified: {
       type: Boolean,
-      default: "",
+      default: false,
     },
   },
   {
     timestamps: true,
   }
 );
-export default mongoose.model("AdminTable", userSchema);
+export default mongoose.model("User", userSchema);

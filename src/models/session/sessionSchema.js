@@ -6,6 +6,10 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       default: true,
     },
+    associate: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
