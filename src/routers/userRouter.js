@@ -1,6 +1,6 @@
 import express from "express";
-import { hashPassword } from "../utils/bcrypt.js";
-import { insertUser, updateUser } from "../models/user/UserModel.js";
+import { comparePassword, hashPassword } from "../utils/bcrypt.js";
+import { getAUser, insertUser, updateUser } from "../models/user/UserModel.js";
 import { newUserValidation } from "../middlewares/validation.js";
 import {
   deleteSession,
@@ -9,13 +9,27 @@ import {
 const router = express.Router();
 import { v4 as uuidv4 } from "uuid";
 import { emailVerificationMail } from "../services/email/nodemailer.js";
+import { getTokens, signRefreshJWT } from "../utils/jwt.js";
+import { auth } from "../middlewares/auth.js";
 
-router.get("/", (req, res, next) => {
+router.get("/", auth, (req, res, next) => {
   try {
-    res.json({
-      status: "success",
-      message: "TODO",
-    });
+    const { userInfo } = req;
+
+    userInfo.__v = undefined;
+
+    userInfo?.status === "active"
+      ? res.json({
+          status: "success",
+          message: "",
+          userInfo,
+        })
+      : res.json({
+          status: "error",
+          message:
+            "Your account has not been activated. check your email to verify your account",
+          userInfo,
+        });
   } catch (error) {
     next(error);
   }
@@ -94,6 +108,40 @@ router.post("/user-verification", async (req, res, next) => {
     res.json({
       status: "error",
       message: "Invalid link, contact admin",
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+//admin authentication
+router.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    // check if user exist with email
+
+    const user = await getAUser({ email });
+
+    if (user._id) {
+      //verify password
+      const confirmPass = comparePassword(password, user.password);
+
+      if (confirmPass) {
+        //user is authenticated
+        const jwts = await getTokens(email);
+      }
+    }
+
+    //create jwts then return
+    return res.json({
+      status: "success",
+      message: "Login successful",
+      jwts: await getTokens(email),
+    });
+
+    res.json({
+      status: "error",
+      message: "Invalid login details",
     });
   } catch (error) {
     next(error);
